@@ -71,6 +71,14 @@ passport.use(strategy);
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.serializeUser((user: Express.User, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user as Express.User);
+});
+
 app.use(auth(config));
 app.use(cors());
 
