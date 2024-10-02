@@ -5,6 +5,7 @@ import passport from 'passport';
 import { Strategy as Auth0Strategy } from 'passport-auth0';
 import 'dotenv/config';
 import { auth, requiresAuth } from 'express-openid-connect';
+import authRouter from '../auth';
 const expressSession = require('express-session');
 
 const port = process.env.PORT;
@@ -81,6 +82,14 @@ passport.deserializeUser((user, done) => {
 
 app.use(auth(config));
 app.use(cors());
+
+// Creating custom middleware with Express
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+});
+
+app.use("/", authRouter);
 
 app.get('/', (req: Request, res: Response) => {
   console.log('isAuthenticated: ' + req.oidc.isAuthenticated());
